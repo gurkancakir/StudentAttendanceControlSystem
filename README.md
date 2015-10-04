@@ -3,8 +3,9 @@
 
 ### Kullanılan Kütüphaneler ###
 
-* Dialog       				: https://github.com/pedant/sweet-alert-dialog
-* Android Support Library 	: http://android-developers.blogspot.com.tr/2015/05/android-design-support-library.html
+* Butter Knife				: https://github.com/JakeWharton/butterknife
+* Parse 					: https://github.com/ParsePlatform/Parse-SDK-Android
+* BootStrap 				: https://github.com/Bearded-Hen/Android-Bootstrap
 
 Kütüphane eklendikçe güncellenecektir.
 
