@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/navHome"
+            android:checked="false"
+            android:icon="@drawable/nav_home_screen"
+            android:title="Home Screen" />
+        <item
+            android:id="@+id/navMyLessons"
+            android:checked="false"
+            android:icon="@drawable/nav_my_lessons"
+            android:title="My Lessons" />
+        <item
+            android:id="@+id/navAddDevices"
+            android:checked="false"
+            android:icon="@drawable/nav_add_devices"
+            android:title="Add Device" />
+        <item
+            android:id="@+id/navAttendance"
+            android:checked="false"
+            android:icon="@drawable/nav_attendance_control"
+            android:title="Attendance Control" />
+        <item
+            android:id="@+id/navLogout"
+            android:checked="false"
+            android:icon="@drawable/nav_logout"
+            android:title="Logout" />
+        <item
+            android:id="@+id/navSettings"
+            android:checked="false"
+            android:icon="@drawable/nav_settings"
+            android:title="Settings" />
+
+    </group>
+</menu>
