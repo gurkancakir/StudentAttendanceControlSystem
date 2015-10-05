@@ -33,6 +33,9 @@ public class SplashScreen extends MyActivity {
 
             @Override
             public void run() {
+                Intent i = new Intent(SplashScreen.this, LoginActivity.class);
+                startActivity(i);
+                /*
                 if (checkNetworkConnection()) {
                     // This method will be executed once the timer is over
                     // Start your app main activity
@@ -53,9 +56,9 @@ public class SplashScreen extends MyActivity {
                                     finish();
                                 }
                             })
-                            .show();*/
+                            .show();///
                     //show alert about network connection
-                }
+                }*/
             }
         }, SPLASH_TIME_OUT);
 
