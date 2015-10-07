@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
@@ -11,6 +12,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -18,11 +21,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.parse.DeleteCallback;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -34,13 +38,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import tr.edu.bilecik.studentattendancecontrolsystem.CustomClasses.MySupportFragment;
-import tr.edu.bilecik.studentattendancecontrolsystem.HomeScreen;
 import tr.edu.bilecik.studentattendancecontrolsystem.R;
 
 /**
  * Created by gurkanmustafa on 04/10/2015.
  */
-public class AttendanceControlFragment extends MySupportFragment {
+public class AttendanceControlFragment extends MySupportFragment implements SwipeRefreshLayout.OnRefreshListener{
 
     BluetoothAdapter bluetoothAdapter;
     ArrayAdapter<String> detectedAdapter;
@@ -49,53 +52,188 @@ public class AttendanceControlFragment extends MySupportFragment {
     ListView listViewDetected;
     private Menu optionsMenu;
 
+    String objId;
+    private SwipeRefreshLayout swipeRefreshLayout;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_attendance_control, null);
+        View rootView = inflater.inflate(R.layout.fragment_attendance_control,null);
         setHasOptionsMenu(true);
+        getActivity().setTitle("Attendance Control");
 
-        listViewDetected = (ListView) rootView.findViewById(R.id.listViewDetected);
+        listViewDetected = (ListView) rootView.findViewById(R.id.listViewAddDevices);
+        swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout);
 
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         onBluetooth();
         context = getActivity();
-        detectedAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_single_choice);
+        detectedAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1);
         arrayListBluetoothDevices = new ArrayList<BluetoothDevice>();
         listViewDetected.setAdapter(detectedAdapter);
 
-        arrayListBluetoothDevices.clear();
-        startSearching();
 
+        swipeRefreshLayout.setOnRefreshListener(this);
+
+        swipeRefreshLayout.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        swipeRefreshLayout.setRefreshing(true);
+                                        arrayListBluetoothDevices.clear();
+                                        //startSearching();
+                                        refresh();
+                                    }
+                                }
+        );
+
+
+        listViewDetected.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, final int position, long l) {
+
+                onProgress(true,R.id.action_progress); //refresh enable
+                final AlertDialog.Builder builderSingle = new AlertDialog.Builder(getActivity());
+                builderSingle.setTitle("Select One Name:-");
+
+                final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.select_dialog_singlechoice);
+                final List<String> lstUserId  = new ArrayList<>();
+
+                ParseQuery<ParseObject> query2 = ParseQuery.getQuery("_User");
+                query2.whereEqualTo("Auth", "WOFSNDJ9nE"); //ogrenci olanları getir
+                query2.findInBackground(new FindCallback<ParseObject>() {
+                    @Override
+                    public void done(List<ParseObject> objects, ParseException e) {
+                        System.out.println("bb : " + objects.size());
+                        for (ParseObject item : objects) {
+                            lstUserId.add(item.get("username").toString());
+                            arrayAdapter.add(item.get("Name") + " " + item.get("Surname"));
+                        }
+                        onProgress(false, R.id.action_progress); //refresh disable
+                        builderSingle.show();
+                    }
+                });
+
+                builderSingle.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+                builderSingle.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, final int which) {
+                        final String strName = arrayAdapter.getItem(which);
+                        final String userId = lstUserId.get(which);
+                        final String deviceNo = arrayListBluetoothDevices.get(position).getAddress().toString();
+
+                        //Device Kaydet
+                        ParseQuery<ParseObject> query4 = ParseQuery.getQuery("UserDevices");
+                        query4.whereEqualTo("UserId", userId);
+                        query4.getFirstInBackground(new GetCallback<ParseObject>() {
+                            @Override
+                            public void done(ParseObject object, ParseException e) {
+                                if (object != null) {
+                                    object.put("DeviceNo", deviceNo);
+                                    object.saveInBackground();
+                                } else {
+                                    //DeviceNo uniq olmalidir. Var mi kontrol
+                                    ParseQuery<ParseObject> query6 = ParseQuery.getQuery("UserDevices");
+                                    query6.whereEqualTo("DeviceNo", deviceNo);
+                                    query6.getFirstInBackground(new GetCallback<ParseObject>() {
+                                        @Override
+                                        public void done(final ParseObject object, ParseException e) {
+                                                if (object == null) {
+                                                    ParseObject userDevice = new ParseObject("UserDevices");
+                                                    userDevice.put("UserId", userId);
+                                                    userDevice.put("DeviceNo", deviceNo);
+                                                    userDevice.saveInBackground();
+                                                    System.out.println("Cihaz baskasına kayıtlı degil");
+                                                } else {
+                                                    //Bu DeviceNo baskasina kayitli
+                                                    AlertDialog.Builder alertBuilder = new AlertDialog.Builder(getActivity());
+                                                    alertBuilder.setTitle("Warning !");
+                                                    alertBuilder.setMessage("Cihaz Başkasına Kayıtlı değiştirmek istiyor musunuz ?");
+                                                    alertBuilder.setPositiveButton("Evet", new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                                            object.deleteInBackground(new DeleteCallback() {
+                                                                @Override
+                                                                public void done(ParseException e) {
+                                                                    ParseObject userDevice = new ParseObject("UserDevices");
+                                                                    userDevice.put("UserId", userId);
+                                                                    userDevice.put("DeviceNo", deviceNo);
+                                                                    userDevice.saveInBackground();
+                                                                }
+                                                            });
+                                                        }
+                                                    });
+                                                    alertBuilder.setNegativeButton("Hayır", new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                                            dialogInterface.dismiss();
+                                                        }
+                                                    });
+                                                    alertBuilder.show();
+                                                    System.out.println("Cihaz baskasına kayıtlı");
+                                                }
+                                                System.out.println("if girdi");
+                                        }
+                                    });
+                                }
+                                System.out.println("Cihaz Kaydedildi..");
+                            }
+                        });
+
+                    }
+                });
+                //builderSingle.show();
+                System.out.println("Tıklandı");
+            }//onItemClick End
+        });
 
         return rootView;
     }
 
+    private void onProgress(boolean isContinious,int id)
+    {
+        final MenuItem refreshItem = optionsMenu
+                .findItem(id);
+        if (refreshItem != null) {
+            if (isContinious) {
+                refreshItem.setActionView(R.layout.actionbar_refresh_progress);
+            } else {
+                refreshItem.setActionView(null);
+            }
+        }
+    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         this.optionsMenu = menu;
-        inflater.inflate(R.menu.menu_attendance_control,menu);
+        inflater.inflate(R.menu.menu_attendance_control, menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if(id == R.id.action_attendance){
-            try {
-                attendance();
-            }catch (Exception ex)
-            {
-                ex.printStackTrace();
-            }
+        if(id == R.id.action_refresh){
+            refresh();
+
+            return true;
+        }else if (id == R.id.action_attendance)
+        {
+            attendance();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
+
     public void attendance(){
 
+        onProgress(true,R.id.action_progress); //refresh enable
         new StartAttendanceControl().execute();
         setRefreshActionButtonState(true);//progress bar refresh iconla değişecek ve çalışacak .
 
@@ -109,23 +247,9 @@ public class AttendanceControlFragment extends MySupportFragment {
         }, 5000);
 
     }
-    public void setRefreshActionButtonState(final boolean refreshing) {
 
-        //bu method refresh iteme tıklandığında progress bar gözükmesi için
-        if (optionsMenu != null) {
-            final MenuItem refreshItem = optionsMenu
-                    .findItem(R.id.action_attendance);
-            if (refreshItem != null) {
-                if (refreshing) {
-                    refreshItem.setActionView(R.layout.actionbar_refresh_progress);
-                } else {
-                    refreshItem.setActionView(null);
-                }
-            }
-        }
-    }
-
-    private class StartAttendanceControl extends AsyncTask<Void,Void,Void>{
+    //Bu kisim test icin yazilmistir. Duzenlenecek simdilik elle girilen degerlerle yoklama almakta.
+    private class StartAttendanceControl extends AsyncTask<Void,Void,Void> {
 
         @Override
         protected Void doInBackground(Void... voids) {
@@ -148,10 +272,45 @@ public class AttendanceControlFragment extends MySupportFragment {
                             attendanceStatus.saveInBackground();
                             System.out.println("Ekleniyorr");
                         }
+                        onProgress(false,R.id.action_progress); //refresh disable
                     }
                 });
             }
             return null;
+        }
+    }
+
+
+    public void refresh(){
+
+        arrayListBluetoothDevices.clear();
+        detectedAdapter.clear();
+        startSearching();
+
+        setRefreshActionButtonState(true);//progress bar refresh iconla değişecek ve çalışacak .
+
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                setRefreshActionButtonState(false);//5 sn sonra duracak ve refresh iconu geri gelecek. Siz bu arada başka işlemler sunucu bağlantısı vs.. yapabilirsiniz
+
+            }
+        }, 5000);
+    }
+    public void setRefreshActionButtonState(final boolean refreshing) {
+
+        //bu method refresh iteme tıklandığında progress bar gözükmesi için
+        if (optionsMenu != null) {
+            final MenuItem refreshItem = optionsMenu
+                    .findItem(R.id.action_refresh);
+            if (refreshItem != null) {
+                if (refreshing) {
+                    refreshItem.setActionView(R.layout.actionbar_refresh_progress);
+                } else {
+                    refreshItem.setActionView(null);
+                }
+            }
         }
     }
 
@@ -175,6 +334,7 @@ public class AttendanceControlFragment extends MySupportFragment {
         }
     }
 
+    //Receiver
     private BroadcastReceiver myReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -182,6 +342,7 @@ public class AttendanceControlFragment extends MySupportFragment {
             String action = intent.getAction();
             if(BluetoothDevice.ACTION_FOUND.equals(action)){
                 Toast.makeText(context, "ACTION_FOUND", Toast.LENGTH_SHORT).show();
+                onProgress(false, R.id.action_progress); //refresh disable
 
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 try
@@ -217,9 +378,16 @@ public class AttendanceControlFragment extends MySupportFragment {
                         detectedAdapter.notifyDataSetChanged();
                     }
                 }
-                //new StartAttendanceControl().execute();
+
+                swipeRefreshLayout.setRefreshing(false);
             }
         }
     };
 
+    @Override
+    public void onRefresh() {
+        arrayListBluetoothDevices.clear();
+        //startSearching();
+        refresh();
+    }
 }

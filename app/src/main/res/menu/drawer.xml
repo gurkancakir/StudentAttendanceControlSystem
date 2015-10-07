@@ -13,11 +13,11 @@
             android:checked="false"
             android:icon="@drawable/nav_my_lessons"
             android:title="My Lessons" />
-        <item
+        <!--<item
             android:id="@+id/navAddDevices"
             android:checked="false"
             android:icon="@drawable/nav_add_devices"
-            android:title="Add Device" />
+            android:title="Add Device" />-->
         <item
             android:id="@+id/navAttendance"
             android:checked="false"

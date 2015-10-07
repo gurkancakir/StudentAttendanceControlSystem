@@ -26,7 +26,7 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import tr.edu.bilecik.studentattendancecontrolsystem.CustomClasses.MyActivityWithoutStatusBar;
-import tr.edu.bilecik.studentattendancecontrolsystem.Fragments.AddDevicesFragment;
+import tr.edu.bilecik.studentattendancecontrolsystem.CustomClasses.MySupportFragment;
 import tr.edu.bilecik.studentattendancecontrolsystem.Fragments.AttendanceControlFragment;
 import tr.edu.bilecik.studentattendancecontrolsystem.Fragments.HomeFragment;
 import tr.edu.bilecik.studentattendancecontrolsystem.Fragments.MyLessonsFragment;
@@ -52,6 +52,12 @@ public class HomeScreen extends MyActivityWithoutStatusBar {
     @Bind(R.id.navDepartment)
     TextView navStudentDepartment;
 
+    //Fragments
+    HomeFragment fragmentHome = new HomeFragment();
+    MyLessonsFragment fragmentMyLessons = new MyLessonsFragment();
+    AttendanceControlFragment fragmentAttendanceControl = new AttendanceControlFragment();
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +67,9 @@ public class HomeScreen extends MyActivityWithoutStatusBar {
 
         // Initializing Toolbar and setting it as the actionbar
         setSupportActionBar(toolbar);
+
+        //Open Default Home Screen
+        changeFragment(fragmentHome);
 
         navStudentName.setText(ParseUser.getCurrentUser().getString("Name")+" "+ParseUser.getCurrentUser().getString("Surname"));
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Department");
@@ -86,11 +95,9 @@ public class HomeScreen extends MyActivityWithoutStatusBar {
                 if (objects.get(0).getString("AuthName").equals("Öğretim Görevlisi")) {
                     Menu menu = navigationView.getMenu();
                     menu.getItem(2).setVisible(true);
-                    menu.getItem(3).setVisible(true);
                 } else {
                     Menu menu = navigationView.getMenu();
                     menu.getItem(2).setVisible(false);
-                    menu.getItem(3).setVisible(false);
                 }
             }
         });
@@ -121,32 +128,13 @@ public class HomeScreen extends MyActivityWithoutStatusBar {
 
                     //Replacing the main content with ContentFragment
                     case R.id.navHome:
-                        Toast.makeText(getApplicationContext(), "d1 Selected", Toast.LENGTH_SHORT).show();
-                        HomeFragment fragmentHome = new HomeFragment();
-                        FragmentTransaction fragmentTransactionHome = getSupportFragmentManager().beginTransaction();
-                        fragmentTransactionHome.replace(R.id.frame, fragmentHome);
-                        fragmentTransactionHome.commit();
+                        changeFragment(fragmentHome);
                         return true;
                     case R.id.navMyLessons:
-                        Toast.makeText(getApplicationContext(), "d2 Selected", Toast.LENGTH_SHORT).show();
-                        MyLessonsFragment fragmentMyLessons = new MyLessonsFragment();
-                        FragmentTransaction fragmentTransactionMyLessons = getSupportFragmentManager().beginTransaction();
-                        fragmentTransactionMyLessons.replace(R.id.frame, fragmentMyLessons);
-                        fragmentTransactionMyLessons.commit();
+                        changeFragment(fragmentMyLessons);
                         return true;
                     case R.id.navAttendance:
-                        Toast.makeText(getApplicationContext(), "d3 Selected", Toast.LENGTH_SHORT).show();
-                        AttendanceControlFragment fragmentAttendanceControl = new AttendanceControlFragment();
-                        FragmentTransaction fragmentTransactionAttendanceControl = getSupportFragmentManager().beginTransaction();
-                        fragmentTransactionAttendanceControl.replace(R.id.frame, fragmentAttendanceControl);
-                        fragmentTransactionAttendanceControl.commit();
-                        return true;
-                    case R.id.navAddDevices:
-                        Toast.makeText(getApplicationContext(), "d2 Selected", Toast.LENGTH_SHORT).show();
-                        AddDevicesFragment fragmentAddDevices = new AddDevicesFragment();
-                        FragmentTransaction fragmentTransactionAddDevices = getSupportFragmentManager().beginTransaction();
-                        fragmentTransactionAddDevices.replace(R.id.frame, fragmentAddDevices);
-                        fragmentTransactionAddDevices.commit();
+                        changeFragment(fragmentAttendanceControl);
                         return true;
                     case R.id.navLogout:
                         ParseUser.logOut();// çıkış yapılıp intent ile giriş sayfasına yönlendirme
@@ -185,6 +173,13 @@ public class HomeScreen extends MyActivityWithoutStatusBar {
         //calling sync state is necessay or else your hamburger icon wont show up
         actionBarDrawerToggle.syncState();
 
+    }
+
+    private void changeFragment(MySupportFragment fragment)
+    {
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.frame, fragment);
+        fragmentTransaction.commit();
     }
 
     @Override

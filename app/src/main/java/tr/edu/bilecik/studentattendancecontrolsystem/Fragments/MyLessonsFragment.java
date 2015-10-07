@@ -44,6 +44,9 @@ public class MyLessonsFragment extends MySupportFragment implements WeekView.Mon
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_my_lessons, null);
 
+        getActivity().setTitle("My Lessons");
+        events.clear();
+
         //textView = (TextView) rootView.findViewById(R.id.textViewLessons);
         // Get a reference for the week view in the layout.
         mWeekView = (WeekView) rootView.findViewById(R.id.weekView);
