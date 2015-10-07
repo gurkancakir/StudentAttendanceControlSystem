@@ -38,6 +38,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import tr.edu.bilecik.studentattendancecontrolsystem.CustomClasses.MySupportFragment;
+import tr.edu.bilecik.studentattendancecontrolsystem.ManualAttendanceActivity;
+import tr.edu.bilecik.studentattendancecontrolsystem.Model.Lesson;
 import tr.edu.bilecik.studentattendancecontrolsystem.R;
 
 /**
@@ -54,6 +56,7 @@ public class AttendanceControlFragment extends MySupportFragment implements Swip
 
     String objId;
     private SwipeRefreshLayout swipeRefreshLayout;
+    List<Lesson> myLessons = new ArrayList<>();
 
     @Nullable
     @Override
@@ -143,41 +146,41 @@ public class AttendanceControlFragment extends MySupportFragment implements Swip
                                     query6.getFirstInBackground(new GetCallback<ParseObject>() {
                                         @Override
                                         public void done(final ParseObject object, ParseException e) {
-                                                if (object == null) {
-                                                    ParseObject userDevice = new ParseObject("UserDevices");
-                                                    userDevice.put("UserId", userId);
-                                                    userDevice.put("DeviceNo", deviceNo);
-                                                    userDevice.saveInBackground();
-                                                    System.out.println("Cihaz baskasına kayıtlı degil");
-                                                } else {
-                                                    //Bu DeviceNo baskasina kayitli
-                                                    AlertDialog.Builder alertBuilder = new AlertDialog.Builder(getActivity());
-                                                    alertBuilder.setTitle("Warning !");
-                                                    alertBuilder.setMessage("Cihaz Başkasına Kayıtlı değiştirmek istiyor musunuz ?");
-                                                    alertBuilder.setPositiveButton("Evet", new DialogInterface.OnClickListener() {
-                                                        @Override
-                                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                                            object.deleteInBackground(new DeleteCallback() {
-                                                                @Override
-                                                                public void done(ParseException e) {
-                                                                    ParseObject userDevice = new ParseObject("UserDevices");
-                                                                    userDevice.put("UserId", userId);
-                                                                    userDevice.put("DeviceNo", deviceNo);
-                                                                    userDevice.saveInBackground();
-                                                                }
-                                                            });
-                                                        }
-                                                    });
-                                                    alertBuilder.setNegativeButton("Hayır", new DialogInterface.OnClickListener() {
-                                                        @Override
-                                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                                            dialogInterface.dismiss();
-                                                        }
-                                                    });
-                                                    alertBuilder.show();
-                                                    System.out.println("Cihaz baskasına kayıtlı");
-                                                }
-                                                System.out.println("if girdi");
+                                            if (object == null) {
+                                                ParseObject userDevice = new ParseObject("UserDevices");
+                                                userDevice.put("UserId", userId);
+                                                userDevice.put("DeviceNo", deviceNo);
+                                                userDevice.saveInBackground();
+                                                System.out.println("Cihaz baskasına kayıtlı degil");
+                                            } else {
+                                                //Bu DeviceNo baskasina kayitli
+                                                AlertDialog.Builder alertBuilder = new AlertDialog.Builder(getActivity());
+                                                alertBuilder.setTitle("Warning !");
+                                                alertBuilder.setMessage("Cihaz Başkasına Kayıtlı değiştirmek istiyor musunuz ?");
+                                                alertBuilder.setPositiveButton("Evet", new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                                        object.deleteInBackground(new DeleteCallback() {
+                                                            @Override
+                                                            public void done(ParseException e) {
+                                                                ParseObject userDevice = new ParseObject("UserDevices");
+                                                                userDevice.put("UserId", userId);
+                                                                userDevice.put("DeviceNo", deviceNo);
+                                                                userDevice.saveInBackground();
+                                                            }
+                                                        });
+                                                    }
+                                                });
+                                                alertBuilder.setNegativeButton("Hayır", new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                                        dialogInterface.dismiss();
+                                                    }
+                                                });
+                                                alertBuilder.show();
+                                                System.out.println("Cihaz baskasına kayıtlı");
+                                            }
+                                            //System.out.println("if girdi");
                                         }
                                     });
                                 }
@@ -233,8 +236,9 @@ public class AttendanceControlFragment extends MySupportFragment implements Swip
 
     public void attendance(){
 
-        onProgress(true,R.id.action_progress); //refresh enable
-        new StartAttendanceControl().execute();
+        askLesson();
+        onProgress(true, R.id.action_progress); //refresh enable
+        //new StartAttendanceControl().execute();
         setRefreshActionButtonState(true);//progress bar refresh iconla değişecek ve çalışacak .
 
         final Handler handler = new Handler();
@@ -244,31 +248,62 @@ public class AttendanceControlFragment extends MySupportFragment implements Swip
                 setRefreshActionButtonState(false);//3 sn sonra duracak ve refresh iconu geri gelecek. Siz bu arada başka işlemler sunucu bağlantısı vs.. yapabilirsiniz
 
             }
-        }, 5000);
+        }, 3000);
+
+    }
+
+    private void askLesson() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Ders Seciniz.");
+        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.select_dialog_singlechoice);
+
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Lessons");
+        query.whereEqualTo("Adviser", ParseUser.getCurrentUser().getUsername().toString());
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> objects, ParseException e) {
+                if (objects != null) {
+                    for (ParseObject object : objects) {
+                        myLessons.add(new Lesson(object.getObjectId(), object.getString("LessonName")));
+                        arrayAdapter.add(object.getString("LessonName"));
+                        System.out.println(object.getObjectId() + " " + object.getString("LessonName"));
+                    }
+                    builder.show();
+                }
+            }
+        });
+
+        builder.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                new StartAttendanceControl().execute(""+i);
+            }
+        });
 
     }
 
     //Bu kisim test icin yazilmistir. Duzenlenecek simdilik elle girilen degerlerle yoklama almakta.
-    private class StartAttendanceControl extends AsyncTask<Void,Void,Void> {
+    private class StartAttendanceControl extends AsyncTask<String,Void,Void> {
 
         @Override
-        protected Void doInBackground(Void... voids) {
+        protected Void doInBackground(final String... strings) {
             System.out.println("Size : " + arrayListBluetoothDevices.size() + " async");
             for (int i=0; i<arrayListBluetoothDevices.size(); i++)
             {
                 ParseQuery<ParseObject> query = ParseQuery.getQuery("UserDevices");
                 query.whereEqualTo("DeviceNo", arrayListBluetoothDevices.get(i).getAddress().toString());
-                final int finalI = i;
+                final int week = 3;
+                final int tmp = i;
                 query.findInBackground(new FindCallback<ParseObject>() {
                     @Override
                     public void done(List<ParseObject> objects, ParseException e) {
-                        System.out.println("Object Size : " + objects.size() + " async DeviceNo : " + arrayListBluetoothDevices.get(finalI).getAddress().toString());
+                        System.out.println("Object Size : " + objects.size() + " async DeviceNo : " + arrayListBluetoothDevices.get(tmp).getAddress().toString());
                         if (objects.size() > 0)
                         {
                             ParseObject attendanceStatus = new ParseObject("AttendanceStatus");
                             attendanceStatus.put("User", objects.get(0).get("UserId").toString());
-                            attendanceStatus.put("Lessons", "S72WCSgzQ5");
-                            attendanceStatus.put("Week", finalI);
+                            attendanceStatus.put("Lessons", myLessons.get(Integer.parseInt(strings[0])).getObjectId());//selected lesson
+                            attendanceStatus.put("Week", week);
                             attendanceStatus.saveInBackground();
                             System.out.println("Ekleniyorr");
                         }
@@ -276,6 +311,10 @@ public class AttendanceControlFragment extends MySupportFragment implements Swip
                     }
                 });
             }
+            Intent intent = new Intent(getActivity(), ManualAttendanceActivity.class);
+            intent.putExtra("week",strings[0]);
+            intent.putExtra("lesson",myLessons.get(Integer.parseInt(strings[0])).getObjectId());
+            startActivity(intent);
             return null;
         }
     }

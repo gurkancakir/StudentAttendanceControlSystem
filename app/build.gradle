@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "tr.edu.bilecik.studentattendancecontrolsystem"
-        minSdkVersion 11
+        minSdkVersion 14
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
@@ -28,4 +28,5 @@ dependencies {
     compile 'com.beardedhen:androidbootstrap:+'
     compile 'com.parse:parse-android:1.10.2'
     compile 'com.github.alamkanak:android-week-view:1.2.3'
+    compile 'co.dift.ui.swipetoaction:library:1.1'
 }

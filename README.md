@@ -7,6 +7,7 @@
 * Parse 					: https://github.com/ParsePlatform/Parse-SDK-Android
 * BootStrap : https://github.com/Bearded-Hen/Android-Bootstrap
 * WeekView 					: https://github.com/alamkanak/Android-Week-View
+* SwipeToAction 			: https://github.com/diftco/SwipeToAction
 
 Kütüphane eklendikçe güncellenecektir.
 

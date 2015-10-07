@@ -75,7 +75,7 @@ public class MyLessonsFragment extends MySupportFragment implements WeekView.Mon
 
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery("UserLessons");
-        query.whereEqualTo("Users", ParseUser.getCurrentUser().getObjectId());
+        query.whereEqualTo("Users", ParseUser.getCurrentUser().getUsername());
         query.findInBackground(new FindCallback<ParseObject>() {
             public void done(final List<ParseObject> list, ParseException e) {
                 if (e == null) {
@@ -156,7 +156,7 @@ public class MyLessonsFragment extends MySupportFragment implements WeekView.Mon
         // Populate the week view with some events.
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery("UserLessons");
-        query.whereEqualTo("Users", ParseUser.getCurrentUser().getObjectId());
+        query.whereEqualTo("Users", ParseUser.getCurrentUser().getUsername());
         query.findInBackground(new FindCallback<ParseObject>() {
             public void done(final List<ParseObject> list, ParseException e) {
                 if (e == null) {

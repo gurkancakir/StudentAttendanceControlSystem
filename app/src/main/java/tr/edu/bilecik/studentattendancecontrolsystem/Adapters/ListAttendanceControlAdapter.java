@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import tr.edu.bilecik.studentattendancecontrolsystem.Model.Lesson;
+import tr.edu.bilecik.studentattendancecontrolsystem.Model.Attendance;
 import tr.edu.bilecik.studentattendancecontrolsystem.R;
 
 /**
@@ -20,9 +20,9 @@ import tr.edu.bilecik.studentattendancecontrolsystem.R;
 public class ListAttendanceControlAdapter extends BaseAdapter {
     private LayoutInflater mInflater;
     private Activity activity;
-    List<Lesson> lessons;
+    List<Attendance> lessons;
 
-    public ListAttendanceControlAdapter(Activity activity,List<Lesson> lessons)
+    public ListAttendanceControlAdapter(Activity activity,List<Attendance> lessons)
     {
         mInflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.activity = activity;
@@ -35,7 +35,7 @@ public class ListAttendanceControlAdapter extends BaseAdapter {
     }
 
     @Override
-    public Lesson getItem(int i) {
+    public Attendance getItem(int i) {
         return lessons.get(i);
     }
 
@@ -50,7 +50,7 @@ public class ListAttendanceControlAdapter extends BaseAdapter {
         if (rowView == null){
             rowView = mInflater.inflate(R.layout.list_attendance_item, null);
         }
-        Lesson lesson = lessons.get(position);
+        Attendance lesson = lessons.get(position);
         ((TextView) rowView.findViewById(R.id.txtLessonName)).setText(lesson.getLessonName());
         ((SeekBar) rowView.findViewById(R.id.seekBarAttendance)).setProgress(lesson.getAttendance());
 

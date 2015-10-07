@@ -3,24 +3,15 @@ package tr.edu.bilecik.studentattendancecontrolsystem.Model;
 /**
  * Created by gurkanmustafa on 07/10/2015.
  */
-public class Lesson {
+public class Attendance {
 
-    private String objectId;
     private String lessonName;
+    private int attendance;
 
-    public Lesson(String objectId, String lessonName)
+    public Attendance(String lessonName, int attendance)
     {
-        this.setObjectId(objectId);
         this.setLessonName(lessonName);
-    }
-
-
-    public String getObjectId() {
-        return objectId;
-    }
-
-    public void setObjectId(String objectId) {
-        this.objectId = objectId;
+        this.setAttendance(attendance);
     }
 
     public String getLessonName() {
@@ -29,5 +20,13 @@ public class Lesson {
 
     public void setLessonName(String lessonName) {
         this.lessonName = lessonName;
+    }
+
+    public int getAttendance() {
+        return attendance;
+    }
+
+    public void setAttendance(int attendance) {
+        this.attendance = attendance;
     }
 }

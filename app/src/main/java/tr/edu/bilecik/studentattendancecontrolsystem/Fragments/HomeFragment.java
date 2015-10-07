@@ -7,10 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.SeekBar;
 
 import com.parse.FindCallback;
-import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -21,7 +19,7 @@ import java.util.List;
 
 import tr.edu.bilecik.studentattendancecontrolsystem.Adapters.ListAttendanceControlAdapter;
 import tr.edu.bilecik.studentattendancecontrolsystem.CustomClasses.MySupportFragment;
-import tr.edu.bilecik.studentattendancecontrolsystem.Model.Lesson;
+import tr.edu.bilecik.studentattendancecontrolsystem.Model.Attendance;
 import tr.edu.bilecik.studentattendancecontrolsystem.R;
 
 /**
@@ -30,7 +28,7 @@ import tr.edu.bilecik.studentattendancecontrolsystem.R;
 public class HomeFragment extends MySupportFragment implements SwipeRefreshLayout.OnRefreshListener{
 
     ListView listViewAttendance;
-    List<Lesson> lessonList;
+    List<Attendance> lessonList;
     ListAttendanceControlAdapter listAttendanceControlAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
 
@@ -79,7 +77,7 @@ public class HomeFragment extends MySupportFragment implements SwipeRefreshLayou
                         query1.findInBackground(new FindCallback<ParseObject>() {
                             @Override
                             public void done(List<ParseObject> objects, ParseException e) {
-                                lessonList.add(new Lesson(lesson.getString("LessonName"), objects.size()));
+                                lessonList.add(new Attendance(lesson.getString("LessonName"), objects.size()));
                                 System.out.println("ders yoklama : "+lesson.getString("LessonName")+" "+objects.size());
                                 listAttendanceControlAdapter.notifyDataSetChanged();
                             }

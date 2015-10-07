@@ -16,4 +16,5 @@
     <string name="action_sign_in">Sign in</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="title_activity_home_screen">HomeScreen</string>
+    <string name="title_activity_manual_attendance">ManualAttendanceActivity</string>
 </resources>
