@@ -36,7 +36,7 @@ public class HomeFragment extends MySupportFragment implements SwipeRefreshLayou
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_home,null);
-        getActivity().setTitle("Home");
+        getActivity().setTitle(getString(R.string.title_home_fragment));
 
         swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout);
 
@@ -68,27 +68,26 @@ public class HomeFragment extends MySupportFragment implements SwipeRefreshLayou
             @Override
             public void done(List<ParseObject> objects, ParseException e) {
                 if (e == null) {
-                    for (final ParseObject lesson : objects)
-                    {
+                    for (final ParseObject lesson : objects) {
                         System.out.println("for ici");
                         //aktif kisinin derslerine bakildi.
                         ParseQuery<ParseObject> query1 = ParseQuery.getQuery("AttendanceStatus");
-                        query1.whereEqualTo("Lessons",lesson.getObjectId());
+                        query1.whereEqualTo("Lessons", lesson.getObjectId());
                         query1.findInBackground(new FindCallback<ParseObject>() {
                             @Override
                             public void done(List<ParseObject> objects, ParseException e) {
                                 lessonList.add(new Attendance(lesson.getString("LessonName"), objects.size()));
-                                System.out.println("ders yoklama : "+lesson.getString("LessonName")+" "+objects.size());
+                                System.out.println("ders yoklama : " + lesson.getString("LessonName") + " " + objects.size());
                                 listAttendanceControlAdapter.notifyDataSetChanged();
                             }
                         });
                     }//for end
+                }//if end
+                swipeRefreshLayout.setRefreshing(false);
 
-                }
             }
         });
 
-        swipeRefreshLayout.setRefreshing(false);
     }
 
     @Override

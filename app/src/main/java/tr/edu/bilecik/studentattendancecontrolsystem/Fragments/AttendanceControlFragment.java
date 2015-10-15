@@ -39,6 +39,7 @@ import java.util.List;
 
 import tr.edu.bilecik.studentattendancecontrolsystem.CustomClasses.MySupportFragment;
 import tr.edu.bilecik.studentattendancecontrolsystem.ManualAttendanceActivity;
+import tr.edu.bilecik.studentattendancecontrolsystem.Model.AttendancedUsers;
 import tr.edu.bilecik.studentattendancecontrolsystem.Model.Lesson;
 import tr.edu.bilecik.studentattendancecontrolsystem.R;
 
@@ -63,7 +64,7 @@ public class AttendanceControlFragment extends MySupportFragment implements Swip
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_attendance_control,null);
         setHasOptionsMenu(true);
-        getActivity().setTitle("Attendance Control");
+        getActivity().setTitle(getString(R.string.title_attendance_fragment));
 
         listViewDetected = (ListView) rootView.findViewById(R.id.listViewAddDevices);
         swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout);
@@ -305,6 +306,7 @@ public class AttendanceControlFragment extends MySupportFragment implements Swip
                             attendanceStatus.put("Lessons", myLessons.get(Integer.parseInt(strings[0])).getObjectId());//selected lesson
                             attendanceStatus.put("Week", week);
                             attendanceStatus.saveInBackground();
+                            AttendancedUsers.getInstance().listUserIds.add(objects.get(0).get("UserId").toString());
                             System.out.println("Ekleniyorr");
                         }
                         onProgress(false,R.id.action_progress); //refresh disable

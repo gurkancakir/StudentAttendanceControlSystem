@@ -67,9 +67,10 @@ public class LoginActivity extends MyActivity {
                                 if (user != null) {
                                     progressDialog.dismiss();
                                     startActivity(intent);
+                                    finish();
                                 } else {
                                     progressDialog.dismiss();
-                                    String error = "girilen bilgiler yanlis";
+                                    String error = getString(R.string.alert_message_error);
                                     /*getString(R.string.errorLogin);
                                     if (e.getCode() == 100)//UnknownHostException yani internet baglantisi yok ise
                                         error = getString(R.string.errorLoginNetwork);

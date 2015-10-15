@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">Student Attendance Control System</string>
 
+    <string name="title_home_fragment">Home</string>
+    <string name="title_attendance_fragment">Attendance Control</string>
+    <string name="title_lesson_fragment">My Lessons</string>
+
     <string name="splash_screen">Splash Screen</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_login">Sign in</string>
@@ -17,4 +21,7 @@
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="title_activity_home_screen">HomeScreen</string>
     <string name="title_activity_manual_attendance">ManualAttendanceActivity</string>
+
+    <string name="alert_message_error">There is an error.\nPlease try again later.</string>
+
 </resources>

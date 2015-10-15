@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,20 +21,23 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import co.dift.ui.SwipeToAction;
 import tr.edu.bilecik.studentattendancecontrolsystem.Adapters.ManualListAdapter;
+import tr.edu.bilecik.studentattendancecontrolsystem.Model.AttendancedUsers;
 import tr.edu.bilecik.studentattendancecontrolsystem.Model.User;
 
-public class ManualAttendanceActivity extends AppCompatActivity {
+public class ManualAttendanceActivity extends AppCompatActivity{
 
     RecyclerView recyclerView;
     SwipeToAction swipeToAction;
     ManualListAdapter manualListAdapter;
 
+    SwipeRefreshLayout swipeRefreshLayout;
+
     List<User> users = new ArrayList<>();
-    List<String> complatedUsers = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +45,8 @@ public class ManualAttendanceActivity extends AppCompatActivity {
         setContentView(R.layout.activity_manual_attendance);
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler);
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
+
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
@@ -85,57 +91,44 @@ public class ManualAttendanceActivity extends AppCompatActivity {
     }
 
     private void populate() {
+        swipeRefreshLayout.setRefreshing(true);
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
+            final List<String> listAttendancedUsers = AttendancedUsers.getInstance().listUserIds;
             String week = extras.getString("week");
             final String lesson = extras.getString("lesson");
             if (lesson != null && week != null) {
-                final ParseQuery<ParseObject> query = ParseQuery.getQuery("AttendanceStatus");
-                query.whereEqualTo("Week",week);
-                query.whereEqualTo("Lessons",lesson);
-                query.findInBackground(new FindCallback<ParseObject>() {
+
+                ParseQuery<ParseObject> query1 = ParseQuery.getQuery("UserLessons");
+                query1.whereEqualTo("Lessons",lesson);
+                query1.findInBackground(new FindCallback<ParseObject>() {
                     @Override
                     public void done(List<ParseObject> objects, ParseException e) {
                         if (objects != null)
                         {
-                            for (ParseObject obj : objects)
-                                complatedUsers.add(obj.getString("User"));
-                            System.out.println("x : "+objects.size());
-
-                            ParseQuery<ParseObject> query1 = ParseQuery.getQuery("UserLessons");
-                            query1.whereEqualTo("Lessons",lesson);
-                            query1.findInBackground(new FindCallback<ParseObject>() {
-                                @Override
-                                public void done(List<ParseObject> objects, ParseException e) {
-                                    if (objects != null)
-                                    {
-                                        for (final ParseObject obj : objects)
-                                        {
-                                            if (!complatedUsers.contains(obj.getString("Users")))
+                            for (final ParseObject obj : objects)
+                            {
+                                if (!listAttendancedUsers.contains(obj.getString("Users")))
+                                {
+                                    System.out.println(" c: " + listAttendancedUsers.size());
+                                    ParseQuery<ParseObject> query2 = ParseQuery.getQuery("_User");
+                                    query2.whereEqualTo("username", obj.getString("Users"));
+                                    query2.getFirstInBackground(new GetCallback<ParseObject>() {
+                                        @Override
+                                        public void done(ParseObject user, ParseException e) {
+                                            if (user != null)
                                             {
-                                                System.out.println(" c: " + complatedUsers.size());
-                                                ParseQuery<ParseObject> query2 = ParseQuery.getQuery("_User");
-                                                query2.whereEqualTo("username", obj.getString("Users"));
-                                                query2.getFirstInBackground(new GetCallback<ParseObject>() {
-                                                    @Override
-                                                    public void done(ParseObject user, ParseException e) {
-                                                        if (user != null)
-                                                        {
-                                                            users.add(new User(user.getString("username"),user.getString("Name"),
-                                                                    user.getString("Surname"),user.getString("Department")));
-                                                            System.out.println("var");
-                                                            manualListAdapter.notifyDataSetChanged();
-                                                        }
-                                                    }
-                                                });
+                                                users.add(new User(user.getString("username"),user.getString("Name"),
+                                                        user.getString("Surname"),user.getString("Department")));
+                                                System.out.println("var");
+                                                manualListAdapter.notifyDataSetChanged();
                                             }
+                                            swipeRefreshLayout.setRefreshing(false);
                                         }
-                                    }
+                                    });
                                 }
-                            });
-
+                            }
                         }
-
                     }
                 });
             }

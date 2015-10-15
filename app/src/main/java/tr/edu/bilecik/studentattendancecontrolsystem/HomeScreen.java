@@ -43,9 +43,6 @@ public class HomeScreen extends MyActivityWithoutStatusBar {
     @Bind(R.id.drawer)
     DrawerLayout drawerLayout;
 
-    @Bind(R.id.navProfileImage)
-    BootstrapCircleThumbnail navProfilePicture;
-
     @Bind(R.id.navUserName)
     TextView navStudentName;
 
@@ -84,7 +81,7 @@ public class HomeScreen extends MyActivityWithoutStatusBar {
             }
         });
 
-        MenuItem item = navigationView.getMenu().getItem(3);
+        MenuItem item = navigationView.getMenu().getItem(2);
         item.setVisible(false);
 
         ParseQuery<ParseObject> query2 = ParseQuery.getQuery("Auth");
@@ -140,6 +137,7 @@ public class HomeScreen extends MyActivityWithoutStatusBar {
                         ParseUser.logOut();// çıkış yapılıp intent ile giriş sayfasına yönlendirme
                         Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                         startActivity(intent);
+                        finish(); // kill activity
                         return true;
                     case R.id.navSettings:
                         return true;
@@ -175,6 +173,7 @@ public class HomeScreen extends MyActivityWithoutStatusBar {
 
     }
 
+    //this function change fragment into frame
     private void changeFragment(MySupportFragment fragment)
     {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
