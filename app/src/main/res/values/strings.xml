@@ -24,4 +24,15 @@
 
     <string name="alert_message_error">There is an error.\nPlease try again later.</string>
 
+    <!-- attendance control page -->
+    <string name="attendance_student_dialog_title">Select Student</string>
+    <string name="attendance_device_someone_else_title">Warning !</string>
+    <!-- Cihaz Başkasına Kayıtlı değiştirmek istiyor musunuz ? -->
+    <string name="attendance_device_someone_else_message">Do you want to change the device registered to someone else?</string>
+    <string name="attendance_device_someone_else_yes">Yes</string>
+    <string name="attendance_device_someone_else_no">No</string>
+
+    <string name="attendance_lesson_dialog_title">Select Lesson</string>
+    <string name="attendance_week_dialog_title">Select Week</string>
+
 </resources>

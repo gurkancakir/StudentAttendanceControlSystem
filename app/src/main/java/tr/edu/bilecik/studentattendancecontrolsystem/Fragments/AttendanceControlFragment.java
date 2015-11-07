@@ -99,7 +99,7 @@ public class AttendanceControlFragment extends MySupportFragment implements Swip
 
                 onProgress(true,R.id.action_progress); //refresh enable
                 final AlertDialog.Builder builderSingle = new AlertDialog.Builder(getActivity());
-                builderSingle.setTitle("Select One Name:-");
+                builderSingle.setTitle(getString(R.string.attendance_student_dialog_title));
 
                 final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.select_dialog_singlechoice);
                 final List<String> lstUserId  = new ArrayList<>();
@@ -158,9 +158,9 @@ public class AttendanceControlFragment extends MySupportFragment implements Swip
                                             } else {
                                                 //Bu DeviceNo baskasina kayitli
                                                 AlertDialog.Builder alertBuilder = new AlertDialog.Builder(getActivity());
-                                                alertBuilder.setTitle("Warning !");
-                                                alertBuilder.setMessage("Cihaz Başkasına Kayıtlı değiştirmek istiyor musunuz ?");
-                                                alertBuilder.setPositiveButton("Evet", new DialogInterface.OnClickListener() {
+                                                alertBuilder.setTitle(getString(R.string.attendance_device_someone_else_title));
+                                                alertBuilder.setMessage(getString(R.string.attendance_device_someone_else_message));
+                                                alertBuilder.setPositiveButton(getString(R.string.attendance_device_someone_else_yes), new DialogInterface.OnClickListener() {
                                                     @Override
                                                     public void onClick(DialogInterface dialogInterface, int i) {
                                                         object.deleteInBackground(new DeleteCallback() {
@@ -174,7 +174,7 @@ public class AttendanceControlFragment extends MySupportFragment implements Swip
                                                         });
                                                     }
                                                 });
-                                                alertBuilder.setNegativeButton("Hayır", new DialogInterface.OnClickListener() {
+                                                alertBuilder.setNegativeButton(getString(R.string.attendance_device_someone_else_no), new DialogInterface.OnClickListener() {
                                                     @Override
                                                     public void onClick(DialogInterface dialogInterface, int i) {
                                                         dialogInterface.dismiss();
@@ -257,7 +257,7 @@ public class AttendanceControlFragment extends MySupportFragment implements Swip
 
     private void askLesson() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Ders Seciniz.");
+        builder.setTitle(getString(R.string.attendance_lesson_dialog_title));
         final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.select_dialog_singlechoice);
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Lessons");
@@ -290,7 +290,7 @@ public class AttendanceControlFragment extends MySupportFragment implements Swip
     {
         boolean isOnClick = false;
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Hafta Seciniz.");
+        builder.setTitle(getString(R.string.attendance_week_dialog_title));
         final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.select_dialog_singlechoice);
 
         //for (int i=0;i<weeks.length;i++)
