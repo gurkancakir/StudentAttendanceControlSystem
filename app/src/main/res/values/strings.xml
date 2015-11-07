@@ -35,4 +35,8 @@
     <string name="attendance_lesson_dialog_title">Select Lesson</string>
     <string name="attendance_week_dialog_title">Select Week</string>
 
+    <!-- Manuel attendance page -->
+    <string name="manuel_attendance_snacbar_aded">aded</string>
+    <string name="manuel_attendance_snacbar_removed">removed</string>
+
 </resources>

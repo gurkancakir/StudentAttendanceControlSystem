@@ -19,6 +19,7 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,6 +39,8 @@ public class ManualAttendanceActivity extends AppCompatActivity{
     SwipeRefreshLayout swipeRefreshLayout;
 
     List<User> users = new ArrayList<>();
+    private String week;
+    private String lesson;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,24 +63,27 @@ public class ManualAttendanceActivity extends AppCompatActivity{
             @Override
             public boolean swipeLeft(final Object itemData) {
                 final int pos = removeUser((User)itemData);
-                displaySnackbar(((User)itemData).getName() + " removed", "Undo", new View.OnClickListener() {
+                displaySnackbar(((User)itemData).getName() + " removed", null,null);
+                        /*"Undo", new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         addUser(pos, (User)itemData);
                     }
-                });
+                });*/
                 return true;
             }
 
             @Override
             public boolean swipeRight(Object itemData) {
-                displaySnackbar(((User)itemData).getName() + " added", null, null);
+                User user = (User)itemData;
+                addUser(user); //db ekleme
+                displaySnackbar(user.getName() + getString(R.string.manuel_attendance_snacbar_aded), null, null);
                 return true;
             }
 
             @Override
             public void onClick(Object itemData) {
-                displaySnackbar(((User)itemData).getName() + " onClick", null, null);
+                displaySnackbar(((User)itemData).getName() + getString(R.string.manuel_attendance_snacbar_removed), null, null);
             }
 
             @Override
@@ -95,8 +101,8 @@ public class ManualAttendanceActivity extends AppCompatActivity{
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             final List<String> listAttendancedUsers = AttendancedUsers.getInstance().listUserIds;
-            String week = extras.getString("week");
-            final String lesson = extras.getString("lesson");
+            week = extras.getString("week");
+            lesson = extras.getString("lesson");
             if (lesson != null && week != null) {
 
                 ParseQuery<ParseObject> query1 = ParseQuery.getQuery("UserLessons");
@@ -134,20 +140,52 @@ public class ManualAttendanceActivity extends AppCompatActivity{
             }
         }
     }
-    private int removeUser(User book) {
-        int pos = users.indexOf(book);
-        users.remove(book);
-        manualListAdapter.notifyItemRemoved(pos);
-        return pos;
+
+    private boolean userListControl()
+    {
+        return (users.size() > 0) ? true : false;
     }
-    private void addUser(int pos, User book) {
-        users.add(pos, book);
-        manualListAdapter.notifyItemInserted(pos);
+    private int removeUser(User user) {
+        int pos = users.indexOf(user);
+        users.remove(user);
+        manualListAdapter.notifyItemRemoved(pos);
+
+
+        if (!userListControl())
+        {
+            //kisi kalmamis anasayfaya gonder
+            finish();
+        }
+
+        return pos;
+
+    }
+
+    //Yoklamada kisiyi var olarak ekler
+    private void addUser(final User user) {
+        ParseObject attendanceStatus = new ParseObject("AttendanceStatus");
+        attendanceStatus.put("User", user.getUserName());
+        attendanceStatus.put("Lessons", lesson);
+        attendanceStatus.put("Week", Integer.parseInt(week));
+        System.out.println("Ders : " + lesson + " Week : " + week + " User : " + user.getUserName());
+        attendanceStatus.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+                    System.out.println("Manuel Eklendi");
+                }else
+                {
+                    System.err.println(e.getStackTrace());
+                }
+            }
+        }); //save
+        removeUser(user);
     }
     private void displaySnackbar(String text, String actionName, View.OnClickListener action) {
         Snackbar snack = Snackbar.make(findViewById(android.R.id.content), text, Snackbar.LENGTH_LONG)
                 .setAction(actionName, action);
 
+        //edit view
         View v = snack.getView();
         v.setBackgroundColor(getResources().getColor(R.color.secondary));
         ((TextView) v.findViewById(android.support.design.R.id.snackbar_text)).setTextColor(Color.WHITE);
