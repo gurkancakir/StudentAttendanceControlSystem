@@ -19,6 +19,14 @@
             android:layout_marginLeft="20dp"
             android:tint="@color/icons"
             android:src="@color/primary"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="5dp"
+            android:tint="@color/icons"
+            android:src="@drawable/icon_add_user"/>
     </RelativeLayout>
 
 
@@ -38,15 +46,14 @@
             android:layout_marginRight="20dp"
             android:tint="@color/icons"
             android:src="@color/accent"/>
-        <TextView
-            android:id="@+id/removeText"
+        <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:singleLine="true"
             android:layout_alignParentRight="true"
-            android:textSize="16dp"
-            android:text="Remove"
-            android:textStyle="bold" />
+            android:layout_centerVertical="true"
+            android:layout_marginRight="5dp"
+            android:tint="@color/icons"
+            android:src="@drawable/icon_remove_user"/>
     </RelativeLayout>
 
 

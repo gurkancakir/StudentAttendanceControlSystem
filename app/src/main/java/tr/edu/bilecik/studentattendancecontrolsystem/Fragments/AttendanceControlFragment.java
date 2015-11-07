@@ -33,6 +33,7 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,6 +59,7 @@ public class AttendanceControlFragment extends MySupportFragment implements Swip
     String objId;
     private SwipeRefreshLayout swipeRefreshLayout;
     List<Lesson> myLessons = new ArrayList<>();
+    private String[] weeks = {"1","2","3","4","5","6","7","8","9","10","11","12","13","14"};
 
     @Nullable
     @Override
@@ -277,10 +279,32 @@ public class AttendanceControlFragment extends MySupportFragment implements Swip
         builder.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                new StartAttendanceControl().execute(""+i);
+                askWeek(i);
             }
         });
 
+    }
+
+    //return week as String
+    private void askWeek(final int lesson)
+    {
+        boolean isOnClick = false;
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Hafta Seciniz.");
+        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.select_dialog_singlechoice);
+
+        //for (int i=0;i<weeks.length;i++)
+        //    arrayAdapter.add(weeks[i]);
+
+        arrayAdapter.addAll(weeks);
+        builder.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                System.out.println("Ders : "+i+"\nWeek : "+weeks[i]);
+                    new StartAttendanceControl().execute(""+lesson,weeks[i]);
+            }
+        });
+        builder.show();
     }
 
     //Bu kisim test icin yazilmistir. Duzenlenecek simdilik elle girilen degerlerle yoklama almakta.
@@ -293,7 +317,7 @@ public class AttendanceControlFragment extends MySupportFragment implements Swip
             {
                 ParseQuery<ParseObject> query = ParseQuery.getQuery("UserDevices");
                 query.whereEqualTo("DeviceNo", arrayListBluetoothDevices.get(i).getAddress().toString());
-                final int week = 3;
+                //final int week = 3; //test value
                 final int tmp = i;
                 query.findInBackground(new FindCallback<ParseObject>() {
                     @Override
@@ -304,19 +328,25 @@ public class AttendanceControlFragment extends MySupportFragment implements Swip
                             ParseObject attendanceStatus = new ParseObject("AttendanceStatus");
                             attendanceStatus.put("User", objects.get(0).get("UserId").toString());
                             attendanceStatus.put("Lessons", myLessons.get(Integer.parseInt(strings[0])).getObjectId());//selected lesson
-                            attendanceStatus.put("Week", week);
-                            attendanceStatus.saveInBackground();
+                            attendanceStatus.put("Week", Integer.parseInt(strings[1]));
                             AttendancedUsers.getInstance().listUserIds.add(objects.get(0).get("UserId").toString());
+                            System.out.println("listUserIds : " + AttendancedUsers.getInstance().listUserIds.size());
+                            attendanceStatus.saveInBackground(new SaveCallback() {
+                                @Override
+                                public void done(ParseException e) {
+
+                                    Intent intent = new Intent(getActivity(), ManualAttendanceActivity.class);
+                                    intent.putExtra("week",strings[1]);
+                                    intent.putExtra("lesson",myLessons.get(Integer.parseInt(strings[0])).getObjectId());
+                                    startActivity(intent);
+                                }
+                            });
                             System.out.println("Ekleniyorr");
                         }
                         onProgress(false,R.id.action_progress); //refresh disable
                     }
                 });
             }
-            Intent intent = new Intent(getActivity(), ManualAttendanceActivity.class);
-            intent.putExtra("week",strings[0]);
-            intent.putExtra("lesson",myLessons.get(Integer.parseInt(strings[0])).getObjectId());
-            startActivity(intent);
             return null;
         }
     }
