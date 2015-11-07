@@ -13,17 +13,18 @@ import android.widget.TextView;
 import java.util.List;
 
 import tr.edu.bilecik.studentattendancecontrolsystem.Model.Attendance;
+import tr.edu.bilecik.studentattendancecontrolsystem.Model.LessonWithCount;
 import tr.edu.bilecik.studentattendancecontrolsystem.R;
 
 /**
  * Created by gurkanmustafa on 07/10/2015.
  */
-public class ListAttendanceControlAdapter extends BaseAdapter {
+public class ListAdviserLessonAdapter extends BaseAdapter {
     private LayoutInflater mInflater;
     private Activity activity;
-    List<Attendance> lessons;
+    List<LessonWithCount> lessons;
 
-    public ListAttendanceControlAdapter(Activity activity,List<Attendance> lessons)
+    public ListAdviserLessonAdapter(Activity activity, List<LessonWithCount> lessons)
     {
         mInflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.activity = activity;
@@ -36,7 +37,7 @@ public class ListAttendanceControlAdapter extends BaseAdapter {
     }
 
     @Override
-    public Attendance getItem(int i) {
+    public LessonWithCount getItem(int i) {
         return lessons.get(i);
     }
 
@@ -49,18 +50,11 @@ public class ListAttendanceControlAdapter extends BaseAdapter {
     public View getView(int position, View view, ViewGroup viewGroup) {
         View rowView = view;
         if (rowView == null){
-            rowView = mInflater.inflate(R.layout.list_attendance_item, null);
+            rowView = mInflater.inflate(R.layout.list_adviser_lesson_item, null);
         }
-        Attendance lesson = lessons.get(position);
-        ((TextView) rowView.findViewById(R.id.txtLessonName)).setText(lesson.getLessonName());
-        SeekBar seekBar = (SeekBar) rowView.findViewById(R.id.seekBarAttendance);
-        seekBar.setProgress(lesson.getAttendance());
-        seekBar.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return true;
-            }
-        });
+        LessonWithCount lesson = lessons.get(position);
+        ((TextView) rowView.findViewById(R.id.txtLessonNameItem)).setText(lesson.getLessonName());
+        ((TextView) rowView.findViewById(R.id.txtCountItem)).setText(""+lesson.getCount());
 
         return rowView;
     }

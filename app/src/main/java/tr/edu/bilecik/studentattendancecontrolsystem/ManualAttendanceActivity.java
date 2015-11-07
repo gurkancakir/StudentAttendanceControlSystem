@@ -2,14 +2,10 @@ package tr.edu.bilecik.studentattendancecontrolsystem;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
 
@@ -18,19 +14,18 @@ import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
-import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import co.dift.ui.SwipeToAction;
 import tr.edu.bilecik.studentattendancecontrolsystem.Adapters.ManualListAdapter;
+import tr.edu.bilecik.studentattendancecontrolsystem.CustomClasses.MyActivity;
 import tr.edu.bilecik.studentattendancecontrolsystem.Model.AttendancedUsers;
 import tr.edu.bilecik.studentattendancecontrolsystem.Model.User;
 
-public class ManualAttendanceActivity extends AppCompatActivity{
+public class ManualAttendanceActivity extends MyActivity{
 
     RecyclerView recyclerView;
     SwipeToAction swipeToAction;
@@ -63,7 +58,7 @@ public class ManualAttendanceActivity extends AppCompatActivity{
             @Override
             public boolean swipeLeft(final Object itemData) {
                 final int pos = removeUser((User)itemData);
-                displaySnackbar(((User)itemData).getName() + " removed", null,null);
+                displaySnackbar(((User)itemData).getName() + getString(R.string.manuel_attendance_snacbar_removed), null,null);
                         /*"Undo", new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -77,13 +72,13 @@ public class ManualAttendanceActivity extends AppCompatActivity{
             public boolean swipeRight(Object itemData) {
                 User user = (User)itemData;
                 addUser(user); //db ekleme
-                displaySnackbar(user.getName() + getString(R.string.manuel_attendance_snacbar_aded), null, null);
+                displaySnackbar(user.getName() +" "+ getString(R.string.manuel_attendance_snacbar_aded), null, null);
                 return true;
             }
 
             @Override
             public void onClick(Object itemData) {
-                displaySnackbar(((User)itemData).getName() + getString(R.string.manuel_attendance_snacbar_removed), null, null);
+                displaySnackbar(((User)itemData).getName()+" "+ getString(R.string.manuel_attendance_snacbar_removed), null, null);
             }
 
             @Override

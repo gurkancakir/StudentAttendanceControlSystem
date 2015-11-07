@@ -12,7 +12,7 @@
             android:id="@+id/navMyLessons"
             android:checked="false"
             android:icon="@drawable/nav_my_lessons"
-            android:title="My Lessons" />
+            android:title="My Adviser Lessons" />
         <!--<item
             android:id="@+id/navAddDevices"
             android:checked="false"

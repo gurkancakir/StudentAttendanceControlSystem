@@ -62,8 +62,8 @@ public class HomeFragment extends MySupportFragment implements SwipeRefreshLayou
 
     private void attendanceControl() {
         //Dersi veren kisiye bakildi
-        final ParseQuery<ParseObject> query = ParseQuery.getQuery("Lessons");
-        query.whereEqualTo("Adviser", ParseUser.getCurrentUser().getUsername().toString());
+        final ParseQuery<ParseObject> query = ParseQuery.getQuery("UserLessons");
+        query.whereEqualTo("Users", ParseUser.getCurrentUser().getUsername().toString());
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> objects, ParseException e) {
@@ -72,13 +72,23 @@ public class HomeFragment extends MySupportFragment implements SwipeRefreshLayou
                         System.out.println("for ici");
                         //aktif kisinin derslerine bakildi.
                         ParseQuery<ParseObject> query1 = ParseQuery.getQuery("AttendanceStatus");
-                        query1.whereEqualTo("Lessons", lesson.getObjectId());
+                        query1.whereEqualTo("Lessons", lesson.getString("Lessons"));
+                        query1.whereEqualTo("User",ParseUser.getCurrentUser().getUsername().toString());
                         query1.findInBackground(new FindCallback<ParseObject>() {
                             @Override
                             public void done(List<ParseObject> objects, ParseException e) {
-                                lessonList.add(new Attendance(lesson.getString("LessonName"), objects.size()));
-                                System.out.println("ders yoklama : " + lesson.getString("LessonName") + " " + objects.size());
-                                listAttendanceControlAdapter.notifyDataSetChanged();
+                                final int size = objects.size();
+                                ParseQuery<ParseObject> query2 = ParseQuery.getQuery("Lessons");
+                                query2.whereEqualTo("objectId", lesson.getString("Lessons"));
+                                query2.findInBackground(new FindCallback<ParseObject>() {
+                                    @Override
+                                    public void done(List<ParseObject> lessonObj, ParseException e) {
+                                        lessonList.add(new Attendance(lessonObj.get(0).getString("LessonName"), size));
+                                        System.out.println("ders yoklama : " + lessonObj.get(0).getString("LessonName") + " " + size);
+                                        listAttendanceControlAdapter.notifyDataSetChanged();
+                                    }
+                                });
+
                             }
                         });
                     }//for end

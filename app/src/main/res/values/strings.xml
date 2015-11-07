@@ -3,7 +3,7 @@
 
     <string name="title_home_fragment">Home</string>
     <string name="title_attendance_fragment">Attendance Control</string>
-    <string name="title_lesson_fragment">My Lessons</string>
+    <string name="title_adviser_lesson_fragment">My Adviser Lessons</string>
 
     <string name="splash_screen">Splash Screen</string>
     <string name="action_settings">Settings</string>
@@ -38,5 +38,9 @@
     <!-- Manuel attendance page -->
     <string name="manuel_attendance_snacbar_aded">aded</string>
     <string name="manuel_attendance_snacbar_removed">removed</string>
+
+    <!-- my adviser lesson page -->
+    <string name="my_adviser_lesson_name">LESSON NAME</string>
+    <string name="my_adviser_lesson_count">COUNT</string>
 
 </resources>

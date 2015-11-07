@@ -14,7 +14,6 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.beardedhen.androidbootstrap.BootstrapCircleThumbnail;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -29,7 +28,7 @@ import tr.edu.bilecik.studentattendancecontrolsystem.CustomClasses.MyActivityWit
 import tr.edu.bilecik.studentattendancecontrolsystem.CustomClasses.MySupportFragment;
 import tr.edu.bilecik.studentattendancecontrolsystem.Fragments.AttendanceControlFragment;
 import tr.edu.bilecik.studentattendancecontrolsystem.Fragments.HomeFragment;
-import tr.edu.bilecik.studentattendancecontrolsystem.Fragments.MyLessonsFragment;
+import tr.edu.bilecik.studentattendancecontrolsystem.Fragments.MyAdviserLessonsFragment;
 
 public class HomeScreen extends MyActivityWithoutStatusBar {
 
@@ -51,7 +50,7 @@ public class HomeScreen extends MyActivityWithoutStatusBar {
 
     //Fragments
     HomeFragment fragmentHome = new HomeFragment();
-    MyLessonsFragment fragmentMyLessons = new MyLessonsFragment();
+    MyAdviserLessonsFragment fragmentMyLessons = new MyAdviserLessonsFragment();
     AttendanceControlFragment fragmentAttendanceControl = new AttendanceControlFragment();
 
 
@@ -84,6 +83,7 @@ public class HomeScreen extends MyActivityWithoutStatusBar {
         MenuItem item = navigationView.getMenu().getItem(2);
         item.setVisible(false);
 
+        //yetkilendirme
         ParseQuery<ParseObject> query2 = ParseQuery.getQuery("Auth");
         query2.whereEqualTo("objectId", ParseUser.getCurrentUser().get("Auth"));
         query2.findInBackground(new FindCallback<ParseObject>() {
@@ -91,9 +91,11 @@ public class HomeScreen extends MyActivityWithoutStatusBar {
             public void done(List<ParseObject> objects, ParseException e) {
                 if (objects.get(0).getString("AuthName").equals("Öğretim Görevlisi")) {
                     Menu menu = navigationView.getMenu();
+                    menu.getItem(1).setVisible(true);
                     menu.getItem(2).setVisible(true);
                 } else {
                     Menu menu = navigationView.getMenu();
+                    menu.getItem(1).setVisible(false);
                     menu.getItem(2).setVisible(false);
                 }
             }
