@@ -23,8 +23,7 @@ public class ListAttendanceControlAdapter extends BaseAdapter {
     private Activity activity;
     List<Attendance> lessons;
 
-    public ListAttendanceControlAdapter(Activity activity,List<Attendance> lessons)
-    {
+    public ListAttendanceControlAdapter(Activity activity, List<Attendance> lessons) {
         mInflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.activity = activity;
         this.lessons = lessons;
@@ -48,7 +47,7 @@ public class ListAttendanceControlAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View view, ViewGroup viewGroup) {
         View rowView = view;
-        if (rowView == null){
+        if (rowView == null) {
             rowView = mInflater.inflate(R.layout.list_attendance_item, null);
         }
         Attendance lesson = lessons.get(position);

@@ -25,7 +25,7 @@ import tr.edu.bilecik.studentattendancecontrolsystem.CustomClasses.MyActivity;
 import tr.edu.bilecik.studentattendancecontrolsystem.Model.AttendancedUsers;
 import tr.edu.bilecik.studentattendancecontrolsystem.Model.User;
 
-public class ManualAttendanceActivity extends MyActivity{
+public class ManualAttendanceActivity extends MyActivity {
 
     RecyclerView recyclerView;
     SwipeToAction swipeToAction;
@@ -53,12 +53,11 @@ public class ManualAttendanceActivity extends MyActivity{
         recyclerView.setAdapter(manualListAdapter);
 
 
-
-            swipeToAction = new SwipeToAction(recyclerView, new SwipeToAction.SwipeListener() {
+        swipeToAction = new SwipeToAction(recyclerView, new SwipeToAction.SwipeListener() {
             @Override
             public boolean swipeLeft(final Object itemData) {
-                final int pos = removeUser((User)itemData);
-                displaySnackbar(((User)itemData).getName() + getString(R.string.manuel_attendance_snacbar_removed), null,null);
+                final int pos = removeUser((User) itemData);
+                displaySnackbar(((User) itemData).getName() + getString(R.string.manuel_attendance_snacbar_removed), null, null);
                         /*"Undo", new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -70,20 +69,20 @@ public class ManualAttendanceActivity extends MyActivity{
 
             @Override
             public boolean swipeRight(Object itemData) {
-                User user = (User)itemData;
+                User user = (User) itemData;
                 addUser(user); //db ekleme
-                displaySnackbar(user.getName() +" "+ getString(R.string.manuel_attendance_snacbar_aded), null, null);
+                displaySnackbar(user.getName() + " " + getString(R.string.manuel_attendance_snacbar_aded), null, null);
                 return true;
             }
 
             @Override
             public void onClick(Object itemData) {
-                displaySnackbar(((User)itemData).getName()+" "+ getString(R.string.manuel_attendance_snacbar_removed), null, null);
+                displaySnackbar(((User) itemData).getName() + " " + getString(R.string.manuel_attendance_snacbar_removed), null, null);
             }
 
             @Override
             public void onLongClick(Object itemData) {
-                displaySnackbar(((User)itemData).getName() + " longClick", null, null);
+                displaySnackbar(((User) itemData).getName() + " longClick", null, null);
             }
         });
 
@@ -101,26 +100,22 @@ public class ManualAttendanceActivity extends MyActivity{
             if (lesson != null && week != null) {
 
                 ParseQuery<ParseObject> query1 = ParseQuery.getQuery("UserLessons");
-                query1.whereEqualTo("Lessons",lesson);
+                query1.whereEqualTo("Lessons", lesson);
                 query1.findInBackground(new FindCallback<ParseObject>() {
                     @Override
                     public void done(List<ParseObject> objects, ParseException e) {
-                        if (objects != null)
-                        {
-                            for (final ParseObject obj : objects)
-                            {
-                                if (!listAttendancedUsers.contains(obj.getString("Users")))
-                                {
+                        if (objects != null) {
+                            for (final ParseObject obj : objects) {
+                                if (!listAttendancedUsers.contains(obj.getString("Users"))) {
                                     System.out.println(" c: " + listAttendancedUsers.size());
                                     ParseQuery<ParseObject> query2 = ParseQuery.getQuery("_User");
                                     query2.whereEqualTo("username", obj.getString("Users"));
                                     query2.getFirstInBackground(new GetCallback<ParseObject>() {
                                         @Override
                                         public void done(ParseObject user, ParseException e) {
-                                            if (user != null)
-                                            {
-                                                users.add(new User(user.getString("username"),user.getString("Name"),
-                                                        user.getString("Surname"),user.getString("Department")));
+                                            if (user != null) {
+                                                users.add(new User(user.getString("username"), user.getString("Name"),
+                                                        user.getString("Surname"), user.getString("Department")));
                                                 System.out.println("var");
                                                 manualListAdapter.notifyDataSetChanged();
                                             }
@@ -136,18 +131,17 @@ public class ManualAttendanceActivity extends MyActivity{
         }
     }
 
-    private boolean userListControl()
-    {
+    private boolean userListControl() {
         return (users.size() > 0) ? true : false;
     }
+
     private int removeUser(User user) {
         int pos = users.indexOf(user);
         users.remove(user);
         manualListAdapter.notifyItemRemoved(pos);
 
 
-        if (!userListControl())
-        {
+        if (!userListControl()) {
             //kisi kalmamis anasayfaya gonder
             finish();
         }
@@ -168,14 +162,14 @@ public class ManualAttendanceActivity extends MyActivity{
             public void done(ParseException e) {
                 if (e == null) {
                     System.out.println("Manuel Eklendi");
-                }else
-                {
+                } else {
                     System.err.println(e.getStackTrace());
                 }
             }
         }); //save
         removeUser(user);
     }
+
     private void displaySnackbar(String text, String actionName, View.OnClickListener action) {
         Snackbar snack = Snackbar.make(findViewById(android.R.id.content), text, Snackbar.LENGTH_LONG)
                 .setAction(actionName, action);

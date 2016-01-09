@@ -41,7 +41,7 @@ public class MyAdviserLessonsFragment extends MySupportFragment {
 
         listViewAdviser = (ListView) rootView.findViewById(R.id.listAdviserLessons);
 
-        adviserLessonAdapter = new ListAdviserLessonAdapter(getActivity(),listLessonsWithValue);
+        adviserLessonAdapter = new ListAdviserLessonAdapter(getActivity(), listLessonsWithValue);
         listViewAdviser.setAdapter(adviserLessonAdapter);
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Lessons");
@@ -55,13 +55,13 @@ public class MyAdviserLessonsFragment extends MySupportFragment {
                         final String lessonObjectId = item.getObjectId();
                         //Ders mevcudu cekiliyor
                         ParseQuery<ParseObject> query1 = ParseQuery.getQuery("UserLessons");
-                        query1.whereEqualTo("Lessons",lessonObjectId);
+                        query1.whereEqualTo("Lessons", lessonObjectId);
                         System.out.println("Lesson : " + lessonName + " objectId : " + lessonObjectId);
                         query1.countInBackground(new CountCallback() {
                             @Override
                             public void done(int count, ParseException e) {
                                 if (e == null) {
-                                    listLessonsWithValue.add(new LessonWithCount(lessonName,count));
+                                    listLessonsWithValue.add(new LessonWithCount(lessonName, count));
                                     adviserLessonAdapter.notifyDataSetChanged();
                                 }
                             }

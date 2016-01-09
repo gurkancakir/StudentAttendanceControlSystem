@@ -47,7 +47,7 @@ import tr.edu.bilecik.studentattendancecontrolsystem.R;
 /**
  * Created by gurkanmustafa on 04/10/2015.
  */
-public class AttendanceControlFragment extends MySupportFragment implements SwipeRefreshLayout.OnRefreshListener{
+public class AttendanceControlFragment extends MySupportFragment implements SwipeRefreshLayout.OnRefreshListener {
 
     BluetoothAdapter bluetoothAdapter;
     ArrayAdapter<String> detectedAdapter;
@@ -59,12 +59,12 @@ public class AttendanceControlFragment extends MySupportFragment implements Swip
     String objId;
     private SwipeRefreshLayout swipeRefreshLayout;
     List<Lesson> myLessons = new ArrayList<>();
-    private String[] weeks = {"1","2","3","4","5","6","7","8","9","10","11","12","13","14"};
+    private String[] weeks = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14"};
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_attendance_control,null);
+        View rootView = inflater.inflate(R.layout.fragment_attendance_control, null);
         setHasOptionsMenu(true);
         getActivity().setTitle(getString(R.string.title_attendance_fragment));
 
@@ -97,12 +97,12 @@ public class AttendanceControlFragment extends MySupportFragment implements Swip
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, final int position, long l) {
 
-                onProgress(true,R.id.action_progress); //refresh enable
+                onProgress(true, R.id.action_progress); //refresh enable
                 final AlertDialog.Builder builderSingle = new AlertDialog.Builder(getActivity());
                 builderSingle.setTitle(getString(R.string.attendance_student_dialog_title));
 
                 final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.select_dialog_singlechoice);
-                final List<String> lstUserId  = new ArrayList<>();
+                final List<String> lstUserId = new ArrayList<>();
 
                 ParseQuery<ParseObject> query2 = ParseQuery.getQuery("_User");
                 query2.whereEqualTo("Auth", "WOFSNDJ9nE"); //ogrenci olanları getir
@@ -201,8 +201,7 @@ public class AttendanceControlFragment extends MySupportFragment implements Swip
         return rootView;
     }
 
-    private void onProgress(boolean isContinious,int id)
-    {
+    private void onProgress(boolean isContinious, int id) {
         final MenuItem refreshItem = optionsMenu
                 .findItem(id);
         if (refreshItem != null) {
@@ -224,12 +223,11 @@ public class AttendanceControlFragment extends MySupportFragment implements Swip
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if(id == R.id.action_refresh){
+        if (id == R.id.action_refresh) {
             refresh();
 
             return true;
-        }else if (id == R.id.action_attendance)
-        {
+        } else if (id == R.id.action_attendance) {
             attendance();
             return true;
         }
@@ -237,7 +235,7 @@ public class AttendanceControlFragment extends MySupportFragment implements Swip
         return super.onOptionsItemSelected(item);
     }
 
-    public void attendance(){
+    public void attendance() {
 
         askLesson();
         onProgress(true, R.id.action_progress); //refresh enable
@@ -286,8 +284,7 @@ public class AttendanceControlFragment extends MySupportFragment implements Swip
     }
 
     //return week as String
-    private void askWeek(final int lesson)
-    {
+    private void askWeek(final int lesson) {
         boolean isOnClick = false;
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(getString(R.string.attendance_week_dialog_title));
@@ -300,21 +297,20 @@ public class AttendanceControlFragment extends MySupportFragment implements Swip
         builder.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                System.out.println("Ders : "+i+"\nWeek : "+weeks[i]);
-                    new StartAttendanceControl().execute(""+lesson,weeks[i]);
+                System.out.println("Ders : " + i + "\nWeek : " + weeks[i]);
+                new StartAttendanceControl().execute("" + lesson, weeks[i]);
             }
         });
         builder.show();
     }
 
     //Bu kisim test icin yazilmistir. Duzenlenecek simdilik elle girilen degerlerle yoklama almakta.
-    private class StartAttendanceControl extends AsyncTask<String,Void,Void> {
+    private class StartAttendanceControl extends AsyncTask<String, Void, Void> {
 
         @Override
         protected Void doInBackground(final String... strings) {
             System.out.println("Size : " + arrayListBluetoothDevices.size() + " async");
-            for (int i=0; i<arrayListBluetoothDevices.size(); i++)
-            {
+            for (int i = 0; i < arrayListBluetoothDevices.size(); i++) {
                 ParseQuery<ParseObject> query = ParseQuery.getQuery("UserDevices");
                 query.whereEqualTo("DeviceNo", arrayListBluetoothDevices.get(i).getAddress().toString());
                 //final int week = 3; //test value
@@ -323,8 +319,7 @@ public class AttendanceControlFragment extends MySupportFragment implements Swip
                     @Override
                     public void done(List<ParseObject> objects, ParseException e) {
                         System.out.println("Object Size : " + objects.size() + " async DeviceNo : " + arrayListBluetoothDevices.get(tmp).getAddress().toString());
-                        if (objects.size() > 0)
-                        {
+                        if (objects.size() > 0) {
                             ParseObject attendanceStatus = new ParseObject("AttendanceStatus");
                             attendanceStatus.put("User", objects.get(0).get("UserId").toString());
                             attendanceStatus.put("Lessons", myLessons.get(Integer.parseInt(strings[0])).getObjectId());//selected lesson
@@ -336,14 +331,14 @@ public class AttendanceControlFragment extends MySupportFragment implements Swip
                                 public void done(ParseException e) {
 
                                     Intent intent = new Intent(getActivity(), ManualAttendanceActivity.class);
-                                    intent.putExtra("week",strings[1]);
-                                    intent.putExtra("lesson",myLessons.get(Integer.parseInt(strings[0])).getObjectId());
+                                    intent.putExtra("week", strings[1]);
+                                    intent.putExtra("lesson", myLessons.get(Integer.parseInt(strings[0])).getObjectId());
                                     startActivity(intent);
                                 }
                             });
                             System.out.println("Ekleniyorr");
                         }
-                        onProgress(false,R.id.action_progress); //refresh disable
+                        onProgress(false, R.id.action_progress); //refresh disable
                     }
                 });
             }
@@ -352,7 +347,7 @@ public class AttendanceControlFragment extends MySupportFragment implements Swip
     }
 
 
-    public void refresh(){
+    public void refresh() {
 
         arrayListBluetoothDevices.clear();
         detectedAdapter.clear();
@@ -369,6 +364,7 @@ public class AttendanceControlFragment extends MySupportFragment implements Swip
             }
         }, 5000);
     }
+
     public void setRefreshActionButtonState(final boolean refreshing) {
 
         //bu method refresh iteme tıklandığında progress bar gözükmesi için
@@ -391,16 +387,16 @@ public class AttendanceControlFragment extends MySupportFragment implements Swip
         context.registerReceiver(myReceiver, intentFilter);
         bluetoothAdapter.startDiscovery();
     }
+
     private void onBluetooth() {
-        if(!bluetoothAdapter.isEnabled())
-        {
+        if (!bluetoothAdapter.isEnabled()) {
             bluetoothAdapter.enable();
             Log.i("Log", "Bluetooth is Enabled");
         }
     }
+
     private void offBluetooth() {
-        if(bluetoothAdapter.isEnabled())
-        {
+        if (bluetoothAdapter.isEnabled()) {
             bluetoothAdapter.disable();
         }
     }
@@ -411,40 +407,33 @@ public class AttendanceControlFragment extends MySupportFragment implements Swip
         public void onReceive(Context context, Intent intent) {
             Message msg = Message.obtain();
             String action = intent.getAction();
-            if(BluetoothDevice.ACTION_FOUND.equals(action)){
+            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 Toast.makeText(context, "ACTION_FOUND", Toast.LENGTH_SHORT).show();
                 onProgress(false, R.id.action_progress); //refresh disable
 
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                try
-                {
+                try {
                     //device.getClass().getMethod("setPairingConfirmation", boolean.class).invoke(device, true);
                     //device.getClass().getMethod("cancelPairingUserInput", boolean.class).invoke(device);
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     Log.i("Log", "Inside the exception: ");
                     e.printStackTrace();
                 }
 
-                if(arrayListBluetoothDevices.size()<1) // this checks if the size of bluetooth device is 0,then add the
+                if (arrayListBluetoothDevices.size() < 1) // this checks if the size of bluetooth device is 0,then add the
                 {                                           // device to the arraylist.
-                    detectedAdapter.add(device.getName()+"\n"+device.getAddress());
+                    detectedAdapter.add(device.getName() + "\n" + device.getAddress());
                     arrayListBluetoothDevices.add(device);
                     detectedAdapter.notifyDataSetChanged();
-                }
-                else
-                {
+                } else {
                     boolean flag = true;    // flag to indicate that particular device is already in the arlist or not
-                    for(int i = 0; i<arrayListBluetoothDevices.size();i++)
-                    {
-                        if(device.getAddress().equals(arrayListBluetoothDevices.get(i).getAddress()))
-                        {
+                    for (int i = 0; i < arrayListBluetoothDevices.size(); i++) {
+                        if (device.getAddress().equals(arrayListBluetoothDevices.get(i).getAddress())) {
                             flag = false;
                         }
                     }
-                    if(flag == true)
-                    {
-                        detectedAdapter.add(device.getName()+"\n"+device.getAddress());
+                    if (flag == true) {
+                        detectedAdapter.add(device.getName() + "\n" + device.getAddress());
                         arrayListBluetoothDevices.add(device);
                         detectedAdapter.notifyDataSetChanged();
                     }

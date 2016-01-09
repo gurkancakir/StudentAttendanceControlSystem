@@ -25,7 +25,7 @@ import tr.edu.bilecik.studentattendancecontrolsystem.R;
 /**
  * Created by gurkanmustafa on 04/10/2015.
  */
-public class HomeFragment extends MySupportFragment implements SwipeRefreshLayout.OnRefreshListener{
+public class HomeFragment extends MySupportFragment implements SwipeRefreshLayout.OnRefreshListener {
 
     ListView listViewAttendance;
     List<Attendance> lessonList;
@@ -35,7 +35,7 @@ public class HomeFragment extends MySupportFragment implements SwipeRefreshLayou
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_home,null);
+        View rootView = inflater.inflate(R.layout.fragment_home, null);
         getActivity().setTitle(getString(R.string.title_home_fragment));
 
         swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout);
@@ -43,7 +43,7 @@ public class HomeFragment extends MySupportFragment implements SwipeRefreshLayou
 
         listViewAttendance = (ListView) rootView.findViewById(R.id.listViewAttendance);
         lessonList = new ArrayList<>();
-        listAttendanceControlAdapter = new ListAttendanceControlAdapter(getActivity(),lessonList);
+        listAttendanceControlAdapter = new ListAttendanceControlAdapter(getActivity(), lessonList);
         listViewAttendance.setAdapter(listAttendanceControlAdapter);
 
         swipeRefreshLayout.setOnRefreshListener(this);
@@ -73,7 +73,7 @@ public class HomeFragment extends MySupportFragment implements SwipeRefreshLayou
                         //aktif kisinin derslerine bakildi.
                         ParseQuery<ParseObject> query1 = ParseQuery.getQuery("AttendanceStatus");
                         query1.whereEqualTo("Lessons", lesson.getString("Lessons"));
-                        query1.whereEqualTo("User",ParseUser.getCurrentUser().getUsername().toString());
+                        query1.whereEqualTo("User", ParseUser.getCurrentUser().getUsername().toString());
                         query1.findInBackground(new FindCallback<ParseObject>() {
                             @Override
                             public void done(List<ParseObject> objects, ParseException e) {
@@ -87,10 +87,10 @@ public class HomeFragment extends MySupportFragment implements SwipeRefreshLayou
                                         System.out.println("ders yoklama : " + lessonObj.get(0).getString("LessonName") + " " + size);
                                         listAttendanceControlAdapter.notifyDataSetChanged();
                                     }
-                                });
+                                });//query2
 
                             }
-                        });
+                        });//query1
                     }//for end
                 }//if end
                 swipeRefreshLayout.setRefreshing(false);

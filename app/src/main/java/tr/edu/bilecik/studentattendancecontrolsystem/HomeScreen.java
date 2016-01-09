@@ -54,7 +54,6 @@ public class HomeScreen extends MyActivityWithoutStatusBar {
     AttendanceControlFragment fragmentAttendanceControl = new AttendanceControlFragment();
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,7 +66,7 @@ public class HomeScreen extends MyActivityWithoutStatusBar {
         //Open Default Home Screen
         changeFragment(fragmentHome);
 
-        navStudentName.setText(ParseUser.getCurrentUser().getString("Name")+" "+ParseUser.getCurrentUser().getString("Surname"));
+        navStudentName.setText(ParseUser.getCurrentUser().getString("Name") + " " + ParseUser.getCurrentUser().getString("Surname"));
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Department");
         query.whereEqualTo("objectId", ParseUser.getCurrentUser().get("Department"));
         query.findInBackground(new FindCallback<ParseObject>() {
@@ -151,7 +150,7 @@ public class HomeScreen extends MyActivityWithoutStatusBar {
         });
 
         // Initializing Drawer Layout and ActionBarToggle
-        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this,drawerLayout,toolbar,R.string.openDrawer, R.string.closeDrawer){
+        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.openDrawer, R.string.closeDrawer) {
 
             @Override
             public void onDrawerClosed(View drawerView) {
@@ -176,8 +175,7 @@ public class HomeScreen extends MyActivityWithoutStatusBar {
     }
 
     //this function change fragment into frame
-    private void changeFragment(MySupportFragment fragment)
-    {
+    private void changeFragment(MySupportFragment fragment) {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.frame, fragment);
         fragmentTransaction.commit();
