@@ -88,14 +88,21 @@ public class HomeScreen extends MyActivityWithoutStatusBar {
         query2.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> objects, ParseException e) {
-                if (objects.get(0).getString("AuthName").equals("Öğretim Görevlisi")) {
-                    Menu menu = navigationView.getMenu();
-                    menu.getItem(1).setVisible(true);
-                    menu.getItem(2).setVisible(true);
-                } else {
-                    Menu menu = navigationView.getMenu();
-                    menu.getItem(1).setVisible(false);
-                    menu.getItem(2).setVisible(false);
+                if (e == null)
+                {
+                    if (objects.get(0).getString("AuthName").equals("Öğretim Görevlisi")) {
+                        Menu menu = navigationView.getMenu();
+                        menu.getItem(1).setVisible(true);
+                        menu.getItem(2).setVisible(true);
+                    } else {
+                        Menu menu = navigationView.getMenu();
+                        menu.getItem(1).setVisible(false);
+                        menu.getItem(2).setVisible(false);
+                    }
+                }else // hata duzeltildi.
+                {
+                    Log.d("Auth", "Error: " + e.getMessage());
+                    ParseUser.logOut();
                 }
             }
         });
