@@ -29,6 +29,7 @@ import tr.edu.bilecik.studentattendancecontrolsystem.CustomClasses.MySupportFrag
 import tr.edu.bilecik.studentattendancecontrolsystem.Fragments.AttendanceControlFragment;
 import tr.edu.bilecik.studentattendancecontrolsystem.Fragments.HomeFragment;
 import tr.edu.bilecik.studentattendancecontrolsystem.Fragments.MyAdviserLessonsFragment;
+import tr.edu.bilecik.studentattendancecontrolsystem.Fragments.SettingsFragment;
 
 public class HomeScreen extends MyActivityWithoutStatusBar {
 
@@ -52,7 +53,7 @@ public class HomeScreen extends MyActivityWithoutStatusBar {
     HomeFragment fragmentHome = new HomeFragment();
     MyAdviserLessonsFragment fragmentMyLessons = new MyAdviserLessonsFragment();
     AttendanceControlFragment fragmentAttendanceControl = new AttendanceControlFragment();
-
+    SettingsFragment settingsFragment = new SettingsFragment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,6 +149,7 @@ public class HomeScreen extends MyActivityWithoutStatusBar {
                         finish(); // kill activity
                         return true;
                     case R.id.navSettings:
+                        changeFragment(settingsFragment);
                         return true;
                     default:
                         Toast.makeText(getApplicationContext(), "d6 Wrong", Toast.LENGTH_SHORT).show();

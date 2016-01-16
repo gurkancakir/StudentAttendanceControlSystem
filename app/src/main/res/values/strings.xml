@@ -4,6 +4,7 @@
     <string name="title_home_fragment">Home</string>
     <string name="title_attendance_fragment">Attendance Control</string>
     <string name="title_adviser_lesson_fragment">My Adviser Lessons</string>
+    <string name="title_settings_fragment">Settings</string>
 
     <string name="splash_screen">Splash Screen</string>
     <string name="action_settings">Settings</string>
@@ -11,8 +12,11 @@
 
     <string name="closeDrawer">Navigation View</string>
     <string name="openDrawer">Navigation View Closed</string>
+
     <string name="progress_login">Login...</string>
     <string name="progress_wait">Please Wait</string>
+
+    <string name="progress_change_password">Changing...</string>
 
     <!-- Strings related to login -->
     <string name="prompt_student_no">Student No</string>
@@ -42,5 +46,11 @@
     <!-- my adviser lesson page -->
     <string name="my_adviser_lesson_name">LESSON NAME</string>
     <string name="my_adviser_lesson_count">COUNT</string>
+
+    <!-- settings page -->
+    <string name="settings_password">Password</string>
+    <string name="settings_new_password">New Password</string>
+    <string name="settings_new_password_repeat">New Password (Repeat)</string>
+    <string name="settings_change_password">Change Password</string>
 
 </resources>
