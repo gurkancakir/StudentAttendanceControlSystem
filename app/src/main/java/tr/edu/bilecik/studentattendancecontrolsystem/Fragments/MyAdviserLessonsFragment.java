@@ -44,6 +44,11 @@ public class MyAdviserLessonsFragment extends MySupportFragment {
         adviserLessonAdapter = new ListAdviserLessonAdapter(getActivity(), listLessonsWithValue);
         listViewAdviser.setAdapter(adviserLessonAdapter);
 
+        //temizle
+        listLessonsWithValue.clear();
+        adviserLessonAdapter.notifyDataSetChanged();
+
+        //Dersleri ve mevcudunu cek
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Lessons");
         query.whereEqualTo("Adviser", ParseUser.getCurrentUser().getUsername());
         query.findInBackground(new FindCallback<ParseObject>() {
